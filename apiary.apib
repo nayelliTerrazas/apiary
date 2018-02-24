@@ -1,0 +1,281 @@
+FORMAT: 1A
+HOST: http://marketplace.apiblueprint.org/
+
+# Marketplace API
+
+Oracle Code LA 2018 - API Design Demo.
+
+## Payment [/payment]
+
+### Validate Payment Info [POST]
+
+This is the resource you need to use for payment validation.
+You need: Card info and Billing info in order to validate the card payment.
+
++ Request (application/json)
+
+        {
+          "PaymentInfo": {
+            "CardPaymentType": 0,
+            "CardNum": "1234123412341234",
+            "ExpireDate": "0316",
+            "CardName": "AMEX",
+            "BillingAddress": {
+              "FirstName": "Daniel",
+              "LastName": "Day-Lewis",
+              "AddressLine": "555 Beverly Lane",
+              "City": "Hollywood",
+              "State": "CA",
+              "ZipCode": "12345",
+              "PhoneNumber": "5127691108"
+            },
+            "AuthorizationAmount": 100
+          }
+        }
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+              "PaymentStatus": {
+                "Status": "Authorized"
+              }
+            }
+
+## Order [/order]
+
+### Create Order [POST]
+
+This is the resource you need to use to place an order into the system.
+The payment needs to be validated and authorized. Once the order is authorized, the system will change the status and it will be ready for ship.
+You need: Billing info, Shipping info, Contact info and the Items you want to include in the Order.
+
++ Request (application/json)
+
+        {
+          "Order": {
+            "Billing": {
+              "CardPaymentType": "1",
+              "CardNum": "1234123412341234",
+              "ExpireDate": "0316",
+              "CardName": "AMEX",
+              "BillingAddress": {
+                "FirstName": "Daniel",
+                "LastName": "Day-Lewis",
+                "AddressLine": "555 Beverly Lane",
+                "City": "Hollywood",
+                "State": "CA",
+                "ZipCode": "12345",
+                "PhoneNumber": "5127691108"
+              }
+            },
+            "Shipping": {
+              "Address": {
+                "FirstName": "Daniel",
+                "LastName": "Day-Lewis",
+                "AddressLine": "555 Beverly Lane",
+                "City": "Hollywood",
+                "State": "CA",
+                "ZipCode": "12345",
+                "PhoneNumber": "5127691108"
+              },
+              "ShippingSpeed": "Standard"
+            },
+            "Email": "daniel@localhost",
+            "Items": {
+              "Item": [
+                {
+                  "SKU": "32779",
+                  "Quantity": "5",
+                  "UnitPrice": "4.72",
+                  "Brand": "Slaker",
+                  "Model": "Water bottle",
+                  "Category": "2008",
+                  "Description": "Slaker Water Bottle"
+                },
+                {
+                  "SKU": "30421",
+                  "Quantity": "2",
+                  "UnitPrice": "10.72",
+                  "Brand": "Grand Prix",
+                  "Model": "Bicycle Tires",
+                  "Category": "2005",
+                  "Description": "Grand Prix Bicycle Tires"
+                },
+                {
+                  "SKU": "32861",
+                  "Quantity": "1",
+                  "UnitPrice": "60.72",
+                  "Brand": "Safe-T",
+                  "Model": "Bicycle helmet",
+                  "Category": "1829",
+                  "Description": "Safe-T Helmet"
+                }
+              ]
+            }
+          }
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+              "OrderNumber": 123456
+            }
+
+## Fullfil Order [/order/fullfil]
+
+### Fullfil Order [POST]
+
+This is the resource you need to use to fullfil an order.
+This service will be executed once an order is ready for ship. Once the service calculates the shipping provider, then will call the pack and ship service.
+You need: Billing info, Shipping info, Contact info and the Items you want to include in the Order.
+
++ Request (application/json)
+
+        {
+          "Order": {
+            "Billing": {
+              "CardPaymentType": "1",
+              "CardNum": "1234123412341234",
+              "ExpireDate": "0316",
+              "CardName": "AMEX",
+              "BillingAddress": {
+                "FirstName": "Daniel",
+                "LastName": "Day-Lewis",
+                "AddressLine": "555 Beverly Lane",
+                "City": "Hollywood",
+                "State": "CA",
+                "ZipCode": "12345",
+                "PhoneNumber": "5127691108"
+              }
+            },
+            "Shipping": {
+              "Address": {
+                "FirstName": "Daniel",
+                "LastName": "Day-Lewis",
+                "AddressLine": "555 Beverly Lane",
+                "City": "Hollywood",
+                "State": "CA",
+                "ZipCode": "12345",
+                "PhoneNumber": "5127691108"
+              },
+              "ShippingSpeed": "Standard"
+            },
+            "Email": "daniel@localhost",
+            "Items": {
+              "Item": [
+                {
+                  "SKU": "32779",
+                  "Quantity": "5",
+                  "UnitPrice": "4.72",
+                  "Brand": "Slaker",
+                  "Model": "Water bottle",
+                  "Category": "2008",
+                  "Description": "Slaker Water Bottle"
+                },
+                {
+                  "SKU": "30421",
+                  "Quantity": "2",
+                  "UnitPrice": "10.72",
+                  "Brand": "Grand Prix",
+                  "Model": "Bicycle Tires",
+                  "Category": "2005",
+                  "Description": "Grand Prix Bicycle Tires"
+                },
+                {
+                  "SKU": "32861",
+                  "Quantity": "1",
+                  "UnitPrice": "60.72",
+                  "Brand": "Safe-T",
+                  "Model": "Bicycle helmet",
+                  "Category": "1829",
+                  "Description": "Safe-T Helmet"
+                }
+              ]
+            }
+          }
+        }
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "code": "success",
+                "message": "The order is ready for ship."
+            }
+            
+## Shipping [/order/packandship]
+
+### Pack and Ship [POST]
+
+This is the resource you need to use to pack and ship the order, change the order status (shipped) and then notificate to the customer.
+You need: Shipping info and Contact info (email).
+
++ Request (application/json)
+
+        {
+            "Shipping": {
+              "Address": {
+                "FirstName": "Daniel",
+                "LastName": "Day-Lewis",
+                "AddressLine": "555 Beverly Lane",
+                "City": "Hollywood",
+                "State": "CA",
+                "ZipCode": "12345",
+                "PhoneNumber": "5127691108"
+              },
+              "ShippingSpeed": "Standard"
+            },
+            "Email": "daniel@localhost",
+            "OrderNumber": 12345
+        }
+
++ Response 201 (application/json)
+
+    + Body
+
+            {
+                "Shipping": {
+                  "Address": {
+                    "FirstName": "Daniel",
+                    "LastName": "Day-Lewis",
+                    "AddressLine": "555 Beverly Lane",
+                    "City": "Hollywood",
+                    "State": "CA",
+                    "ZipCode": "12345",
+                    "PhoneNumber": "5127691108"
+                  },
+                  "ShippingSpeed": "Standard"
+                }
+            }
+            
+## Notifications [/notification/email]
+
+### Send Email Notification [POST]
+
+This is the resource you need to create an order.
+You need: Card Info, Billing Info and the authorization amount.
+
++ Request (application/json)
+
+        {
+            "Email": {
+              "to": "lgonzalez@spsolutions.com.mx",
+              "subject": "Email Notification from Marketplace",
+              "from": "marketplace@spsolutions.com.mx",
+              "html": "This is a message from <h1>Marketplace</h1>"
+            }
+        }
+
++ Response 200 (application/json)
+
+    + Body
+
+            {
+                "code": "success",
+                "message": "Email sent successfully."
+            }
