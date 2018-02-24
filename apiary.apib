@@ -8,11 +8,14 @@ Oracle Code LA 2018 - API Design Demo.
 ## Payment [/payment]
 
 Collections are set of resources, e.g Companies is the collection of Company resource.
-In this example, Payment is a collection
+
+In this example, we have no collections.
 
 ### Validate Payment Info [POST]
 
 Resource is an object or representation of something, which has some associated data with it and there can be set of methods to operate on it. E.g. Animals, schools and employees are resources and delete, add, update are the operations to be performed on these resources.
+
+In this example, /payment is a resource.
 
 This is the resource you need to use for payment validation.
 You need: Card info and Billing info in order to validate the card payment.
@@ -124,13 +127,17 @@ You need: Billing info, Shipping info, Contact info and the Items you want to in
 
 + Response 200 (application/json)
 
+    + Headers
+
+            Location: /order/123456
+
     + Body
 
             {
               "OrderNumber": 123456
             }
 
-## Fullfil Order [/order/fullfil]
+## Fullfil Order [/order/fullfilment]
 
 ### Fullfil Order [POST]
 
